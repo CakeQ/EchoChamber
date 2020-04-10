@@ -1,0 +1,7 @@
+{
+	"files.exclude": {
+		"D:/Documents/Unreal Projects/EchoChamber/.vscode": true,
+		"D:/Documents/Unreal Projects/EchoChamber/Content": true,
+		"D:/Documents/Unreal Projects/EchoChamber/Intermediate": true
+	}
+}

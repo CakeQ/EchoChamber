@@ -1,0 +1,128 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "EchoChamber (Debug)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamber Win64 Debug Build",
+			"program": "D:\\Documents\\Unreal Projects\\EchoChamber\\Binaries\\Win64\\UE4-Win64-Debug.exe",
+			"args": [
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamber (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamber Win64 DebugGame Build",
+			"program": "D:\\Documents\\Unreal Projects\\EchoChamber\\Binaries\\Win64\\UE4-Win64-DebugGame.exe",
+			"args": [
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamber (Development)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamber Win64 Development Build",
+			"program": "D:\\Documents\\Unreal Projects\\EchoChamber\\Binaries\\Win64\\UE4.exe",
+			"args": [
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamber (Shipping)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamber Win64 Shipping Build",
+			"program": "D:\\Documents\\Unreal Projects\\EchoChamber\\Binaries\\Win64\\UE4-Win64-Shipping.exe",
+			"args": [
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamber (Test)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamber Win64 Test Build",
+			"program": "D:\\Documents\\Unreal Projects\\EchoChamber\\Binaries\\Win64\\UE4-Win64-Test.exe",
+			"args": [
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamberEditor (Debug)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamberEditor Win64 Debug Build",
+			"program": "D:\\UE_4.24\\Engine\\Binaries\\Win64\\UE4Editor-Win64-Debug.exe",
+			"args": [
+				"D:\\Documents\\Unreal Projects\\EchoChamber\\EchoChamber.uproject"
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamberEditor (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamberEditor Win64 DebugGame Build",
+			"program": "D:\\UE_4.24\\Engine\\Binaries\\Win64\\UE4Editor-Win64-DebugGame.exe",
+			"args": [
+				"D:\\Documents\\Unreal Projects\\EchoChamber\\EchoChamber.uproject"
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "EchoChamberEditor (Development)",
+			"request": "launch",
+			"preLaunchTask": "EchoChamberEditor Win64 Development Build",
+			"program": "D:\\UE_4.24\\Engine\\Binaries\\Win64\\UE4Editor.exe",
+			"args": [
+				"D:\\Documents\\Unreal Projects\\EchoChamber\\EchoChamber.uproject"
+			],
+			"cwd": "D:\\UE_4.24",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UE_4.24\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "Generate Project Files",
+			"type": "clr",
+			"request": "launch",
+			"program": "D:\\UE_4.24\\Engine\\Binaries\\DotNET\\UnrealBuildTool.exe",
+			"console": "externalTerminal",
+			"args": [
+				"-projectfiles",
+				"-vscode",
+				"-project=\"D:\\Documents\\Unreal Projects\\EchoChamber\\EchoChamber.uproject\"",
+				"-game",
+				"-engine"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"cwd": "D:\\UE_4.24"
+		}
+	]
+}
