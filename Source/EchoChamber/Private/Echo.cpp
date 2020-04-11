@@ -20,9 +20,6 @@ AEcho::AEcho()
 	thickness = 5.0f;
 	color = FColor(255, 255, 255, 255);
 	segments = 360;
-
-	// Collider
-	colliderSphere->SetSphereRadius(radius);
 }
 
 // Called when the game starts or when spawned
@@ -40,9 +37,6 @@ void AEcho::Tick(float DeltaTime)
 	speed += acceleration;
 	radius += (speed * DeltaTime);
 
-	// Update the collision sphere
-	colliderSphere->SetSphereRadius(radius);
-
 	DrawDebugCircle(
 		GetWorld(),
 		circleTransform,
@@ -57,6 +51,6 @@ void AEcho::Tick(float DeltaTime)
 	);
 
 	// DEBUG
-	DrawDebugSphere(GetWorld(), circleTransform.GetOrigin(), radius, segments, color);
+	//DrawDebugSphere(GetWorld(), circleTransform.GetOrigin(), radius, segments, color);
 }
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
 #include "Echo.generated.h"
 
 UCLASS()
@@ -33,9 +32,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FMatrix circleTransform;
-
-	UPROPERTY(EditAnywhere)
-	USphereComponent* colliderSphere;
 
 protected:
 	// Called when the game starts or when spawned
