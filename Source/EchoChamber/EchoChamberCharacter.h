@@ -17,10 +17,8 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
-	/** Called for forwards/backward input */
-	void MoveForward(float Value);
+	/** Called for upwards input */
+	void MoveUp(float Value);
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
@@ -31,6 +29,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

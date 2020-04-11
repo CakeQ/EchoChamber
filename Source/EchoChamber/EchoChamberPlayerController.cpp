@@ -16,12 +16,6 @@ AEchoChamberPlayerController::AEchoChamberPlayerController()
 void AEchoChamberPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
-	{
-		MoveToMouseCursor();
-	}
 }
 
 void AEchoChamberPlayerController::SetupInputComponent()

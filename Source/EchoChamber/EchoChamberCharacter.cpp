@@ -62,7 +62,7 @@ void AEchoChamberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 }
 
 
-void AEchoChamberCharacter::MoveForward(float Value)
+void AEchoChamberCharacter::MoveUp(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
