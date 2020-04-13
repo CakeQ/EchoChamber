@@ -7,7 +7,7 @@
 #include "EchoChamberCharacter.generated.h"
 
 // Uncomment to enable raytrace echos
-//#define ENABLE_RAYTRACE_ECHO
+#define ENABLE_RAYTRACE_ECHO
 
 UCLASS(Blueprintable)
 class AEchoChamberCharacter : public ACharacter
