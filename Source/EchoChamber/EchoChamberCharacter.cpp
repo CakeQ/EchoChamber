@@ -10,7 +10,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
+#include "Engine.h"
 #include "Math/UnrealMathUtility.h"
 
 AEchoChamberCharacter::AEchoChamberCharacter()
@@ -94,5 +97,51 @@ void AEchoChamberCharacter::MoveRight(float Value)
 
 void AEchoChamberCharacter::MakeEcho()
 {
+#ifdef ENABLE_RAYTRACE_ECHO
+	const int NumTraces = 60;
+	const float DeltaAngle = 360.0f / NumTraces;
+	const float DistanceToTrace = 600.0f;
 
+	FVector ActorLocation = GetActorLocation();
+	FVector FacingVec = GetActorForwardVector();
+	FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;		
+	FCollisionResponseParams CollisionParams = FCollisionResponseParams::DefaultResponseParam;
+	FHitResult hitResult;
+
+	for (int TraceIdx = 0; TraceIdx < NumTraces; TraceIdx++)
+	{
+		float DistanceRemaining = DistanceToTrace;
+		FVector origin = ActorLocation;
+		FVector TraceDirection = UKismetMathLibrary::RotateAngleAxis(FacingVec, DeltaAngle * (float)TraceIdx, GetActorUpVector());
+		TraceDirection.Normalize();
+
+		bool bTraceEnded = false;
+		while (!bTraceEnded)
+		{
+			bTraceEnded = !GetWorld()->LineTraceSingleByChannel(hitResult, origin, origin + TraceDirection * DistanceRemaining, ECollisionChannel::ECC_Visibility, Params, CollisionParams);
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+			/*if (hitResult.bBlockingHit)
+			{
+				DrawDebugLine(GetWorld(), origin, origin + TraceDirection * hitResult.Distance, FColor::Red, false, 1.0f);
+			}*/
+#endif
+
+			if (hitResult.bBlockingHit)
+			{
+				FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
+				UParticleSystemComponent* SpawnedComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
+			}
+
+			TraceDirection = FMath::GetReflectionVector(TraceDirection, hitResult.ImpactNormal);
+			origin = hitResult.ImpactPoint;
+			
+			DistanceRemaining -= hitResult.Distance;
+			if (DistanceRemaining <= 0.0f)
+			{
+				bTraceEnded = true;
+			}
+		}
+	}
+#endif
 }
