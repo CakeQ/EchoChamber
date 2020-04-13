@@ -34,7 +34,7 @@ AEchoChamberCharacter::AEchoChamberCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
 	CameraBoom->TargetArmLength = 800.f;
-	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	CameraBoom->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
 	// Create a camera...
@@ -66,6 +66,7 @@ void AEchoChamberCharacter::MoveUp(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("cock"));
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
