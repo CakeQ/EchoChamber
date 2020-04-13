@@ -14,25 +14,32 @@ AEcho::AEcho()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Propagation properties
-	radius = 20.0f;
-	speed = 5.0f;
-	acceleration = 2.0f;
+	Radius = 20.0f;
+	Speed = 5.0f;
+	Acceleration = 2.0f;
 
 	// Visual appearance
-	thickness = 5.0f;
-	color = FColor(255, 255, 255, 255);
-	segments = 360;
+	Thickness = 5.0f;
+	Color = FColor(255, 255, 255, 255);
+	Segments = 360;
 
-	bGoing = true;
+	// Decay/fade
+	StrengthLossRate = 15.0f;
+	Strength = 100.0f;
+	StrengthBounceMultiplier = 1.1f;
 
 	// Collider/overlap detector sphere
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
 	CollisionSphere->SetupAttachment(RootComponent);
-	CollisionSphere->InitSphereRadius(radius);
+	CollisionSphere->InitSphereRadius(Radius);
 	CollisionSphere->SetCollisionProfileName(TEXT("OverlapIgnorePawn"));
-	CollisionSphere->bHiddenInGame = false;
 
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AEcho::OnOverlapBegin);
+
+	// Trace sweeps on collides/overlaps
+	SweepAngle = 60.0f;
+	MaxTraceDist = 600.0f;
+	TracesPerSweep = 10;
 }
 
 // Called when the game starts or when spawned
@@ -46,74 +53,103 @@ void AEcho::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Update the circle radius
-	if (bGoing)
+	// Update strength decay
+	Strength -= (StrengthLossRate * DeltaTime);
+
+	// Check if we should die
+	if (Strength <= 0.0f)
 	{
-		speed += acceleration;
-		radius += (speed * DeltaTime);
-		CollisionSphere->SetSphereRadius(radius);
+		Destroy();
 	}
+
+	// Update the circle radius
+	Speed += Acceleration;
+	Radius += (Speed * DeltaTime);
+	CollisionSphere->SetSphereRadius(Radius);
+
+	// Pitch by -90deg before drawing
+	FTransform ActorTransform = GetActorTransform();
+	FQuat RotationQuat = FQuat(FVector(0.0f, 1.0f, 0.0f), UKismetMathLibrary::DegreesToRadians(-90.0f));
+	ActorTransform.SetRotation(RotationQuat);
+	FMatrix Transform = ActorTransform.ToMatrixNoScale();
+
+	FColor CircleColor = Color;
+	CircleColor.A = 255.0f * (Strength / 100.0f);
 
 	DrawDebugCircle(
 		GetWorld(),
-		GetTransform().ToMatrixNoScale(),
-		radius,
-		segments,
-		color,
+		Transform,
+		Radius,
+		Segments,
+		FColor(255, 255, 255, 10),
 		false,
 		-1,
 		(uint8)'\000',
-		thickness,
+		Thickness,
 		false
 	);
+}
 
-	// DEBUG
-	for (FVector pt : Collisions)
-	{
-		DrawDebugSphere(GetWorld(), pt, 20.0f, 20, FColor::Red);
-	}
-	//DrawDebugSphere(GetWorld(), GetTransform().GetLocation(), radius, 20, color);
+void AEcho::SetSpawnSurfaceActor(AActor* Actor)
+{
+	SpawnedOn = Actor;
+}
+
+void AEcho::SetEchoStrength(float NewStrength)
+{
+	Strength = NewStrength;
 }
 
 // Called when the echo collides with something
 void AEcho::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	TArray<FHitResult> HitResults;
-	const FVector ActorLoc = GetActorLocation();
-
-	if (!OtherActor->GetName().Equals("Cube21_9"))
+	// Don't "collide" with and bounce off actors we were spawned on the surface of
+	if (OtherActor == SpawnedOn)
 	{
 		return;
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	bGoing = false;
 
-	FCollisionShape RaySphere;
-	RaySphere.ShapeType = ECollisionShape::Sphere;
-	RaySphere.SetSphere(radius);
-
-	//DrawDebugSphere(GetWorld(), ActorLoc, radius, 20, FColor::Red, true);
-
-	GetWorld()->SweepMultiByChannel(HitResults, ActorLoc, ActorLoc, FQuat::FQuat(), ECollisionChannel::ECC_WorldDynamic, RaySphere);
-	DrawDebugSphere(GetWorld(), GetTransform().GetLocation(), radius, 20, FColor::Red, true);
-
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("%f hits"), HitResults.Num()));
-
-	for (FHitResult& Hit : HitResults)
+	// Don't collide with other echos
+	if (OtherActor->GetClass() == GetClass())
 	{
-		AActor* HitActor = Hit.GetActor();
-		// piss on nothing but the man himself
-		if (HitActor != OtherActor)
-		{
-			continue;
-		}
-
-		// Not in the plane of the echo
-		if (UKismetMathLibrary::Abs((Hit.ImpactPoint.Z - ActorLoc.Z)) > 0.01f)
-		{
-			continue;
-		}
-
-		Collisions.Add(Hit.ImpactPoint);
+		return;
 	}
+
+	FVector ActorLoc = GetActorLocation();
+	FVector UpAxis = GetActorUpVector();
+
+	// Perform the traces around the closest point on the bounding box of the overlapped actor
+	FVector ClosestBBoxPoint = OtherActor->GetComponentsBoundingBox().GetClosestPointTo(ActorLoc);
+	FVector DirToClosestPt = ClosestBBoxPoint - ActorLoc;
+	DirToClosestPt.Normalize();
+
+	int MiddleTrace = UKismetMathLibrary::FFloor((float)TracesPerSweep / 2.0f);
+	float TraceAngleDelta = SweepAngle / TracesPerSweep;
+
+	// Offset trace direction to where it should start
+	FVector TraceDir = UKismetMathLibrary::RotateAngleAxis(DirToClosestPt, -SweepAngle / 2, UpAxis);
+	FHitResult HitResult;
+
+	for (int TraceIdx = 0; TraceIdx < TracesPerSweep; TraceIdx++)
+	{
+		TraceDir = UKismetMathLibrary::RotateAngleAxis(DirToClosestPt, (-SweepAngle / 2) + TraceAngleDelta * (float)TraceIdx, UpAxis);
+
+		GetWorld()->LineTraceSingleByChannel(HitResult, ActorLoc, ActorLoc + TraceDir * MaxTraceDist, ECollisionChannel::ECC_Visibility);
+
+		if (HitResult.bBlockingHit)
+		{
+			OnEchoBounce(HitResult.ImpactPoint, OtherActor);
+		}
+	}
+}
+
+// Called when the echo should bounce off another actor
+void AEcho::OnEchoBounce(FVector HitLocation, AActor* HitActor)
+{
+	AEcho* Echo = GetWorld()->SpawnActor<AEcho>(GetClass(), HitLocation, FRotator::ZeroRotator);
+	Echo->SetSpawnSurfaceActor(HitActor);
+	Echo->SetEchoStrength(Strength * StrengthBounceMultiplier);
+
+	// Lose some strength ourself
+	SetEchoStrength(Strength / StrengthBounceMultiplier);
 }
