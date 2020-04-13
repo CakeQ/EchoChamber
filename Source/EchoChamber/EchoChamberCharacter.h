@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "EchoChamberCharacter.generated.h"
 
+// Uncomment to enable raytrace echos
+//#define ENABLE_RAYTRACE_ECHO
+
 UCLASS(Blueprintable)
 class AEchoChamberCharacter : public ACharacter
 {
@@ -29,6 +32,9 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Echo)
+	UParticleSystem* ParticleSystem;
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
