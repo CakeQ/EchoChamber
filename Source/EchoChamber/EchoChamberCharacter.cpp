@@ -48,6 +48,11 @@ AEchoChamberCharacter::AEchoChamberCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Echo related stuff
+	EchoCooldown = 10.0f; // seconds
+	// This makes the echo immediately usable
+	LastEchoTime = -EchoCooldown;
 }
 
 void AEchoChamberCharacter::Tick(float DeltaSeconds)
@@ -61,7 +66,7 @@ void AEchoChamberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 	PlayerInputComponent->BindAxis("MoveUp", this, &AEchoChamberCharacter::MoveUp);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AEchoChamberCharacter::MoveRight);
-	PlayerInputComponent->BindAction("Ping", IE_Pressed, this, &AEchoChamberCharacter::MakeEcho);
+	PlayerInputComponent->BindAction("Ping", IE_Pressed, this, &AEchoChamberCharacter::AttemptEcho);
 }
 
 
@@ -93,6 +98,20 @@ void AEchoChamberCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AEchoChamberCharacter::AttemptEcho()
+{
+	float CurTime = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld());
+
+	// Echo is still on cooldown
+	if (CurTime < (LastEchoTime + EchoCooldown))
+	{
+		return;
+	}
+
+	LastEchoTime = CurTime;
+	MakeEcho();
 }
 
 void AEchoChamberCharacter::MakeEcho()

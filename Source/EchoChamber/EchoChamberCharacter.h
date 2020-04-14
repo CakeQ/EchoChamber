@@ -47,5 +47,14 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Echo, meta = (AllowPrivateAccess = "true"))
+	float EchoCooldown;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Echo, meta = (AllowPrivateAccess = "true"))
+	float LastEchoTime;
+
+	UFUNCTION()
+	void AttemptEcho();
 };
 
