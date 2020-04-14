@@ -121,10 +121,10 @@ void AEchoChamberCharacter::MakeEcho()
 			bTraceEnded = !GetWorld()->LineTraceSingleByChannel(hitResult, origin, origin + TraceDirection * DistanceRemaining, ECollisionChannel::ECC_Visibility, Params, CollisionParams);
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
-			/*if (hitResult.bBlockingHit)
+			if (hitResult.bBlockingHit)
 			{
 				DrawDebugLine(GetWorld(), origin, origin + TraceDirection * hitResult.Distance, FColor::Red, false, 1.0f);
-			}*/
+			}
 #endif
 
 			if (hitResult.bBlockingHit)
