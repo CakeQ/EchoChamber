@@ -50,7 +50,7 @@ AEchoChamberCharacter::AEchoChamberCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	// Echo related stuff
-	EchoCooldown = 10.0f; // seconds
+	EchoCooldown = 5.0f; // seconds
 	// This makes the echo immediately usable
 	LastEchoTime = -EchoCooldown;
 }
