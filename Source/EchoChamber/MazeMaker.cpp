@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Engine/StaticMesh.h"
 #include "MazeMaker.h"
+#include "Engine/StaticMesh.h"
 
 // Sets default values
 AMazeMaker::AMazeMaker()

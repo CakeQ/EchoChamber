@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "EchoChamber/Echoes/ECEchoEmitter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -69,7 +70,6 @@ void AEchoChamberCharacter::MoveUp(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("cock"));
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -143,5 +143,18 @@ void AEchoChamberCharacter::MakeEcho()
 			}
 		}
 	}
+#else
+	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FVector location = GetActorLocation();
+	FRotator rotation = GetActorRotation();
+
+	FTransform transform;
+	transform.SetLocation(GetActorLocation());
+	transform.SetRotation(GetActorRotation().Quaternion());
+
+	//AActor* actor = GetWorld()->SpawnActor<AECEchoEmitter>(EchoEmitterClass.GetDefaultObject()->GetClass(), transform, params);
+	AActor* actor = GetWorld()->SpawnActor<AECEchoEmitter>(AECEchoEmitter::StaticClass(), transform, params);
 #endif
 }

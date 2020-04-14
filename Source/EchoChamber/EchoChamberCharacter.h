@@ -7,7 +7,9 @@
 #include "EchoChamberCharacter.generated.h"
 
 // Uncomment to enable raytrace echos
-#define ENABLE_RAYTRACE_ECHO
+//#define ENABLE_RAYTRACE_ECHO
+
+class AECEchoEmitter;
 
 UCLASS(Blueprintable)
 class AEchoChamberCharacter : public ACharacter
@@ -34,7 +36,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Echo)
-	UParticleSystem* ParticleSystem;
+	TSubclassOf<AECEchoEmitter> EchoEmitterClass;
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
