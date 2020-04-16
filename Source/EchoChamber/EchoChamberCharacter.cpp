@@ -174,6 +174,6 @@ void AEchoChamberCharacter::MakeEcho()
 	transform.SetRotation(GetActorRotation().Quaternion());
 
 	//AActor* actor = GetWorld()->SpawnActor<AECEchoEmitter>(EchoEmitterClass.GetDefaultObject()->GetClass(), transform, params);
-	AActor* actor = GetWorld()->SpawnActor<AECEchoEmitter>(AECEchoEmitter::StaticClass(), transform, params);
+	AActor* actor = GetWorld()->SpawnActor<AECEchoEmitter>(EchoEmitterClass.GetDefaultObject()->GetClass(), transform, params);
 #endif
 }

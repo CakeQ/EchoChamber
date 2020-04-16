@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "ECEchoEmitter.generated.h"
 
+class AStaticMeshActor;
 class USphereComponent;
+class UParticleSystemComponent;
 
 static const int NumTraces = 60;
 static const int MaxNumBounces = 6;
 static const float DeltaAngle = 360.0f / NumTraces;
-static const float TraceSpeed = 300.0f;
-static const float MaxTraceDistance = 600.0f;
+static const float TraceSpeed = 500.0f;
+static const float MaxTraceDistance = 1000.0f;
 
 UCLASS()
 class AECEchoEmitter : public AActor
@@ -30,6 +32,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Echo)
 		UParticleSystem* ParticleSystem;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Echo)
+		TSubclassOf<AActor> TravellingParticleActor;
+
 private:
 	struct EchoSegment
 	{
@@ -39,6 +44,7 @@ private:
 		FVector Origin;
 		FVector Direction;
 		bool Done;
+		AActor* ParticleActor;
 	};
 
 	EchoSegment Segments[NumTraces];

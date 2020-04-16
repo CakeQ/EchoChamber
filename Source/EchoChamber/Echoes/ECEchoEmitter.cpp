@@ -4,8 +4,10 @@
 #include "ECEchoEmitter.h"
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Engine/StaticMeshActor.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 AECEchoEmitter::AECEchoEmitter()
@@ -30,6 +32,9 @@ void AECEchoEmitter::BeginPlay()
 		Segments[SegmentIdx].Direction = UKismetMathLibrary::RotateAngleAxis(GetActorForwardVector(), DeltaAngle * (float)SegmentIdx, GetActorUpVector());
 		Segments[SegmentIdx].Direction.Normalize();
 		Segments[SegmentIdx].Done = false;
+
+		FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(Segments[SegmentIdx].Direction, FVector::CrossProduct(Segments[SegmentIdx].Direction, GetActorUpVector()), GetActorUpVector());
+		Segments[SegmentIdx].ParticleActor = GetWorld()->SpawnActor(TravellingParticleActor.GetDefaultObject()->GetClass(), &Segments[SegmentIdx].Origin, &rotation);
 	}
 }
 
@@ -58,26 +63,23 @@ void AECEchoEmitter::Tick(float DeltaTime)
 
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 		//if (hitResult.bBlockingHit)
-		{
-			DrawDebugLine(GetWorld(), Segments[SegmentIdx].Origin, endPoint, FColor::Red, false, 0.3f);
-		}
+		//{
+		//	DrawDebugLine(GetWorld(), Segments[SegmentIdx].Origin, endPoint, FColor::Red, false, 0.3f);
+		//}
 #endif
 
-		//if (hitResult.bBlockingHit)
-		//{
-		//	FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
-		//	UParticleSystemComponent* SpawnedComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
-		//}
+		if (hitResult.bBlockingHit)
+		{
+			FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
+		}
 
 		if (hitResult.bBlockingHit)
 		{
 			Segments[SegmentIdx].Origin = hitResult.ImpactPoint;
 			Segments[SegmentIdx].Direction = FMath::GetReflectionVector(Segments[SegmentIdx].Direction, hitResult.ImpactNormal);
 			Segments[SegmentIdx].DistanceRemaining -= hitResult.Distance;
-			Segments[SegmentIdx].BouncesRemaining--;
-
-			FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
-			UParticleSystemComponent* SpawnedComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
+			Segments[SegmentIdx].BouncesRemaining--;			
 		}
 		else
 		{
@@ -85,9 +87,12 @@ void AECEchoEmitter::Tick(float DeltaTime)
 			Segments[SegmentIdx].DistanceRemaining -= fDistanceToTravel;
 		}
 
+		Segments[SegmentIdx].ParticleActor->SetActorLocation(Segments[SegmentIdx].Origin);
+
 		if (Segments[SegmentIdx].BouncesRemaining < 0
 			|| Segments[SegmentIdx].DistanceRemaining <= 0.0f)
 		{
+			Segments[SegmentIdx].ParticleActor->Destroy();
 			Segments[SegmentIdx].Done = true;
 		}
 	}
