@@ -18,7 +18,7 @@ AEchoFinishLine::AEchoFinishLine()
 void AEchoFinishLine::BeginPlay()
 {
 	Super::BeginPlay();
-	TriggerArea->OnComponentBeginOverlap.AddDynamic(this, &AEchoFinishLine::BeginOverlap);
+	//TriggerArea->OnComponentBeginOverlap.AddDynamic(this, &AEchoFinishLine::BeginOverlap);
 }
 
 void AEchoFinishLine::TriggerFinish()
