@@ -42,7 +42,8 @@ float AEchoChamberGameMode::GetRemainingTime()
 void AEchoChamberGameMode::AddLevelTime(float Time)
 {
 	float Remaining = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle) + Time;
-	GetWorldTimerManager().SetTimer(LevelTimerHandle, this, &AEchoChamberGameMode::OnLevelTimerExpire, -1.0f, false, Remaining + Time);
+	float NewTime = Remaining + Time;
+	GetWorldTimerManager().SetTimer(LevelTimerHandle, this, &AEchoChamberGameMode::OnLevelTimerExpire, NewTime, false, NewTime);
 }
 
 void AEchoChamberGameMode::OnLevelTimerExpire()
