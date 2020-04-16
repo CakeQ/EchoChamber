@@ -24,7 +24,6 @@ void AEchoFinishLine::BeginPlay()
 
 void AEchoFinishLine::TriggerFinish()
 {
-	FString::Printf(TEXT("Finished"));
 	UGameplayStatics::OpenLevel(this, TEXT("UILevel"));
 }
 

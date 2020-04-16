@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MazeMaker.generated.h"
 
+class UInstancedStaticMeshComponent;
+
 UCLASS()
 class ECHOCHAMBER_API AMazeMaker : public AActor
 {
@@ -15,23 +17,39 @@ public:
 	// Sets default values for this actor's properties
 	AMazeMaker();
 
-	UPROPERTY()
-		float _tileSize = 100.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Maze, meta = (AllowPrivateAccess = "true"))
+	float _tileSize = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Maze, meta = (AllowPrivateAccess = "true"))
+	int32 _mazeSize = 20;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void OnConstruction(const FTransform& Transform) override;
-
 private:
 	UInstancedStaticMeshComponent* WallType;
 	UInstancedStaticMeshComponent* FloorType;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	FVector CurrentTile;
 
-	void SpawnBorders(int Size = 10);
+	TArray<int> WallTiles;
+	TArray<int> FloorTiles;
+	TArray<int> BridgeTiles;
+	TArray<FVector> EndTiles;
 
+	int VectorToGrid(FVector v);
+
+	bool HasTile(int TilePos);
+	bool CheckBridge(FVector& CurTile, int dir = 0);
+
+	void SpawnMaze(int Size = 10);
+	void MakeBridge(FVector& CurTile, int dir = 0);
+
+	void AddWall(FTransform& TileTransform);
+	void AddFloor(FTransform& TileTransform);
+	void AddBridge(FTransform& TileTransform);
+	void AddStart(FTransform& CurTile);
+	void AddEnd(FTransform& CurTile);
+	void PickEnd();
 };
