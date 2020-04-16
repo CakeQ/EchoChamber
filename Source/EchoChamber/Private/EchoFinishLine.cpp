@@ -2,13 +2,15 @@
 
 
 #include "EchoFinishLine.h"
-#include "Engine.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEchoFinishLine::AEchoFinishLine()
 {
 	TriggerArea = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionArea"));
-	TriggerArea->OnComponentBeginOverlap.AddDynamic(this, &AEchoFinishLine::BeginOverlap);
+	TriggerArea->InitSphereRadius(100.0f);
 	RootComponent = TriggerArea;
 
 	FinishPad = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PadMesh"));
@@ -17,17 +19,18 @@ AEchoFinishLine::AEchoFinishLine()
 
 void AEchoFinishLine::BeginPlay()
 {
-	Super::BeginPlay();
-	//TriggerArea->OnComponentBeginOverlap.AddDynamic(this, &AEchoFinishLine::BeginOverlap);
+	TriggerArea->OnComponentBeginOverlap.AddDynamic(this, &AEchoFinishLine::OnOverlapBegin);
 }
 
 void AEchoFinishLine::TriggerFinish()
 {
+	FString::Printf(TEXT("Finished"));
 	UGameplayStatics::OpenLevel(this, TEXT("UILevel"));
 }
 
-void AEchoFinishLine::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEchoFinishLine::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	TriggerFinish();
 }
+
 
