@@ -3,6 +3,8 @@
 #include "EchoChamberGameMode.h"
 #include "EchoChamberPlayerController.h"
 #include "EchoChamberCharacter.h"
+#include "Engine/World.h"
+#include "Engine.h"
 #include "UObject/ConstructorHelpers.h"
 
 AEchoChamberGameMode::AEchoChamberGameMode()
@@ -16,4 +18,38 @@ AEchoChamberGameMode::AEchoChamberGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	LevelTimeLimit = 100.0f;
+}
+
+void AEchoChamberGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	StartLevelTimer(LevelTimeLimit);
+}
+
+void AEchoChamberGameMode::StartLevelTimer(float TimeLimit)
+{
+	GetWorldTimerManager().SetTimer(LevelTimerHandle, this, &AEchoChamberGameMode::OnLevelTimerExpire, TimeLimit, false, TimeLimit);
+}
+
+float AEchoChamberGameMode::GetRemainingTime()
+{
+	return GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
+}
+
+void AEchoChamberGameMode::AddLevelTime(float Time)
+{
+	float Remaining = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle) + Time;
+	float NewTime = Remaining + Time;
+	GetWorldTimerManager().SetTimer(LevelTimerHandle, this, &AEchoChamberGameMode::OnLevelTimerExpire, NewTime, false, NewTime);
+}
+
+void AEchoChamberGameMode::OnLevelTimerExpire()
+{
+	// Clear the timer to prevent it from re-firing
+	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
+
+	UE_LOG(LogClass, Warning, TEXT("LICK ASS"));
 }
