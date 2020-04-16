@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Echo)
 		TSubclassOf<AActor> TravellingParticleActor;
 
+	UFUNCTION(BlueprintNativeEvent, Category = "EchoBounce")
+		void OnWallActorHit(AActor* ActorHit);
+
 private:
 	struct EchoSegment
 	{

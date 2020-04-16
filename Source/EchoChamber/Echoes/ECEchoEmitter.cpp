@@ -3,10 +3,12 @@
 
 #include "ECEchoEmitter.h"
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Particles/ParticleSystemComponent.h"
 
 
@@ -72,6 +74,19 @@ void AECEchoEmitter::Tick(float DeltaTime)
 		{
 			FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
+
+			if (hitResult.Actor.IsValid())
+			{
+				OnWallActorHit(hitResult.Actor.Get());
+				//AActor* HitActor = hitResult.Actor.Get();
+				
+				/*if (AStaticMeshActor* StaticMeshActor = Cast<AStaticMeshActor>(HitActor))
+				{
+					UMaterialInstanceDynamic* MI = UMaterialInstanceDynamic::Create(StaticMeshActor->GetStaticMeshComponent()->GetMaterial(0), this);
+					StaticMeshActor->GetStaticMeshComponent()->SetMaterial(0, MI);
+					MI->SetScalarParameterValue(TEXT("TeamColorIndex"), testfloat);
+				}*/
+			}
 		}
 
 		if (hitResult.bBlockingHit)
@@ -101,4 +116,9 @@ void AECEchoEmitter::Tick(float DeltaTime)
 	{
 		Destroy();
 	}
+}
+
+void AECEchoEmitter::OnWallActorHit_Implementation(AActor* ActorHit)
+{
+
 }
