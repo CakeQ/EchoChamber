@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
 #include "EchoFinishLine.generated.h"
 
-UCLASS()
-class ECHOCHAMBER_API AEchoFinishLine : public AActor
+class USphereComponent;
+class UStaticMeshComponent;
+
+UCLASS(Blueprintable)
+class AEchoFinishLine : public AActor
 {
 	GENERATED_BODY()
 	
@@ -31,6 +32,7 @@ public:
 	void TriggerFinish();
 
 	UFUNCTION()
-	void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 };
