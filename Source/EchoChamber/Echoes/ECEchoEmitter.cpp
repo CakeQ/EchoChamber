@@ -72,8 +72,8 @@ void AECEchoEmitter::Tick(float DeltaTime)
 
 		if (hitResult.bBlockingHit)
 		{
-			FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
+			//FRotator rotation = UKismetMathLibrary::MakeRotationFromAxes(GetActorUpVector() * -1.0f, FVector::CrossProduct(GetActorUpVector() * -1.0f, hitResult.ImpactNormal), hitResult.ImpactNormal);
+			//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, (FVector)hitResult.ImpactPoint, rotation);
 
 			if (hitResult.Actor.IsValid())
 			{
