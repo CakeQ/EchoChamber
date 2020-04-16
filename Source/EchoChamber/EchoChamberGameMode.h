@@ -13,7 +13,25 @@ class AEchoChamberGameMode : public AGameModeBase
 
 public:
 	AEchoChamberGameMode();
+
+	UFUNCTION()
+	void StartLevelTimer(float TimeLimit);
+
+	UFUNCTION()
+	void AddLevelTime(float Time);
+
+	UFUNCTION(BlueprintCallable)
+	float GetRemainingTime();
+
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void OnLevelTimerExpire();
+
+	UPROPERTY(VisibleAnywhere)
+	FTimerHandle LevelTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = Levels)
+	float LevelTimeLimit;
 };
-
-
-
