@@ -19,7 +19,7 @@ AEchoChamberGameMode::AEchoChamberGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	LevelTimeLimit = 10.0f;
+	LevelTimeLimit = 100.0f;
 }
 
 void AEchoChamberGameMode::BeginPlay()
